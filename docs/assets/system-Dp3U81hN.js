@@ -1,0 +1,1 @@
+import{h as e}from"./index-DCSQYkE8.js";function u(s){return e.get("/system/users",s)}function n(s){return e.post("/system/users",s)}function o(s,t){return e.put(`/system/users/${s}`,t)}function a(s){return e.delete(`/system/users/${s}`)}function f(s){return e.get("/system/logs",s)}export{n as a,f as b,u as f,a as r,o as u};
