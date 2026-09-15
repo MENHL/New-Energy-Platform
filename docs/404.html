@@ -1,0 +1,29 @@
+<!--
+  [部署兜底] public/404.html —— GitHub Pages 静态托管
+  说明：GitHub Pages 不支持 Nginx try_files 回退，访问/刷新子路由会 404。
+       本页将路径与查询参数透传回 SPA 入口，由前端路由接管。
+-->
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>GreenGrid 新能源运营平台</title>
+  <script>
+    /* 将 GitHub Pages 的 404 请求重定向回 SPA 入口，保留原始路径与查询参数 */
+    (function () {
+      var BASE = '/New-Energy-Platform/'
+      var path = window.location.pathname
+      /* 去掉仓库前缀，得到 SPA 内部路由 */
+      var route = path.indexOf(BASE) === 0 ? path.slice(BASE.length - 1) : path
+      var target = BASE + '?p=' + encodeURIComponent(route + window.location.search + window.location.hash)
+      window.location.replace(target)
+    })()
+  </script>
+</head>
+
+<body>
+  <p>页面跳转中…如果长时间无响应，请<a href="/New-Energy-Platform/">返回首页</a>。</p>
+</body>
+
+</html>
