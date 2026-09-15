@@ -60,7 +60,7 @@
 
 ## 在线预览与截图
 
-- **在线预览**：<https://<你的预览地址>/>（待部署后补充）
+- **在线预览**：https://menhl.github.io/New-Energy-Platform/login
 - **演示环境**：本地 `npm run dev` 启动后访问 <http://localhost:5180>
 
 ### 界面截图
