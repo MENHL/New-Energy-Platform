@@ -1,0 +1,32 @@
+<!--
+  GreenGrid 品牌标志（新能源数据运营平台）
+  设计意象：绿渐变圆角徽标 = 新能源底色；三根上升数据柱 = 运营数据增长；
+           顶端新芽 = 绿色能源驱动业务生长。
+  使用：侧边栏 / 登录页 Logo 区、favicon 源图形。
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <!-- 徽标底色：新芽绿 → 深林绿，左上到右下 -->
+    <linearGradient id="gg-bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#34D399" />
+      <stop offset="1" stop-color="#059669" />
+    </linearGradient>
+    <!-- 数据柱：底部微透 → 顶部纯白，营造光感 -->
+    <linearGradient id="gg-bar" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.78" />
+      <stop offset="1" stop-color="#FFFFFF" />
+    </linearGradient>
+  </defs>
+
+  <!-- 圆角徽标底 -->
+  <rect width="64" height="64" rx="14" fill="url(#gg-bg)" />
+
+  <!-- 三根上升数据柱 -->
+  <rect x="13" y="37" width="9" height="15" rx="2.5" fill="url(#gg-bar)" />
+  <rect x="27.5" y="28" width="9" height="24" rx="2.5" fill="url(#gg-bar)" />
+  <rect x="42" y="19" width="9" height="33" rx="2.5" fill="url(#gg-bar)" />
+
+  <!-- 最高柱顶端的再生新芽 -->
+  <path d="M46.5 19 C 45.3 11 49.8 4.6 57.8 3.4 C 59.4 11.6 54.8 18 46.5 19 Z"
+        fill="#FFFFFF" />
+</svg>

@@ -1,0 +1,49 @@
+/**
+ * [样式混入] styles/_mixins.scss —— 全局
+ * 说明：常用混入（弹性布局、文本省略、卡片外观），全部适配 WebKit 内核（-webkit- 前缀）
+ */
+@use './variables' as *;
+
+/* 弹性布局：两端对齐 + 垂直居中 */
+@mixin flex-between {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+}
+
+/* 弹性布局：居中 */
+@mixin flex-center {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+}
+
+/* 单行文本省略 */
+@mixin ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 1;
+}
+
+/* 统一卡片外观 */
+@mixin card-style {
+  background: $color-bg-card;
+  border-radius: $radius-base;
+  -webkit-box-shadow: $shadow-card;
+  box-shadow: $shadow-card;
+  -webkit-transition: box-shadow 0.2s ease, -webkit-transform 0.2s ease;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}

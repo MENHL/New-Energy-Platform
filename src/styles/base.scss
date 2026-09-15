@@ -1,0 +1,112 @@
+/**
+ * [全局样式] styles/base.scss —— 全局
+ * 说明：样式重置、基础排版、通用工具类、WebKit 滚动条与路由过渡动画
+ * 注意：变量与 mixin 已由 vite.config.ts 的 additionalData 全局注入，此处无需显式 @use
+ */
+
+/* ========== 基础重置（盒模型 + 根元素，仅需支持 WebKit 内核） ========== */
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  font-size: 14px;
+  color: $color-text;
+  background: $color-bg-page;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: $color-primary;
+  text-decoration: none;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+/* ========== WebKit 内核滚动条 ========== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.35);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.55);
+}
+
+/* ========== 通用工具类 ========== */
+
+/* 白底卡片容器 */
+.gg-card {
+  @include card-style;
+  padding: 20px;
+}
+
+/* 卡片标题行：标题 + 右侧操作 */
+.gg-card-head {
+  @include flex-between;
+  margin-bottom: 16px;
+
+  .gg-card-title {
+    position: relative;
+    padding-left: 10px;
+    font-size: 15px;
+    font-weight: 600;
+
+    /* 标题左侧品牌绿色竖条 */
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 3px;
+      height: 14px;
+      background: $color-primary;
+      border-radius: 2px;
+      -webkit-transform: translateY(-50%);
+      transform: translateY(-50%);
+    }
+  }
+
+  .gg-card-extra {
+    font-size: 13px;
+    color: $color-text-secondary;
+  }
+}
+
+/* ========== 路由切换过渡动画 ========== */
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  -webkit-transition: opacity 0.2s ease, transform 0.2s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.fade-slide-enter-from {
+  opacity: 0;
+  -webkit-transform: translateY(12px);
+  transform: translateY(12px);
+}
+
+.fade-slide-leave-to {
+  opacity: 0;
+  -webkit-transform: translateY(-12px);
+  transform: translateY(-12px);
+}

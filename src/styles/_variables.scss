@@ -1,0 +1,35 @@
+/**
+ * [样式变量] styles/_variables.scss —— 全局
+ * 说明：主题色、布局尺寸（依据 PRD 全局规范）、间距体系、圆角与阴影
+ */
+
+/* ========== 主题色 ========== */
+$color-primary: #16a34a; // 品牌绿（新能源主题）
+$color-primary-light: #22c55e; // 品牌绿-亮
+$color-primary-bg: #f0fdf4; // 品牌绿-浅底
+$color-warning: #f59e0b; // 预警橙
+$color-warning-bg: #fffbeb;
+$color-danger: #ef4444; // 异常红
+$color-danger-bg: #fef2f2;
+$color-info: #3b82f6; // 信息蓝
+$color-info-bg: #eff6ff;
+$color-text: #1f2937; // 主文本
+$color-text-secondary: #6b7280; // 次要文本
+$color-text-weak: #9ca3af; // 弱文本
+$color-border: #e5e7eb; // 分割线
+$color-bg-page: #f5f7fa; // 页面背景
+$color-bg-card: #ffffff; // 卡片背景
+$color-bg-hover: #f9fafb; // 悬浮背景
+
+/* ========== 布局尺寸（PRD 4.1 页面布局规范） ========== */
+$sidebar-width: 232px; // 侧边栏宽度（220-240px 区间）
+$sidebar-collapsed: 64px; // 侧边栏收起宽度
+$header-height: 64px; // 顶部栏高度
+$content-padding: 24px; // 内容区内边距
+
+/* ========== 间距 / 圆角 / 阴影（8px 基础间距体系） ========== */
+$space-base: 8px;
+$radius-base: 8px;
+$radius-sm: 4px;
+$shadow-card: 0 2px 8px rgba(15, 23, 42, 0.06);
+$shadow-card-hover: 0 6px 16px rgba(15, 23, 42, 0.1);
