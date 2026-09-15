@@ -1,0 +1,1 @@
+import{h as r}from"./index-BJ3Vw6cV.js";function e(){return r.get("/dashboard/overview")}function n(){return r.get("/board/summary")}function o(a){return r.get("/analytics/summary",a)}export{o as a,n as b,e as f};
