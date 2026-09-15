@@ -896,57 +896,6 @@ dist/
     └── <页面名>-[hash].js     # 各业务页面（路由懒加载分包）
 ```
 
-### Nginx 部署（推荐）
-
-> ⚠️ **History 路由必须配置 `try_files`**，否则刷新任何子路由都会 404。
-
-```nginx
-server {
-    listen       80;
-    server_name  <你的域名>;
-
-    # 前端静态资源目录
-    root   /usr/share/nginx/html/greengrid-admin;
-    index  index.html;
-
-    # ---- History 路由回退（必需） ----
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
-
-    # ---- 静态资源长缓存（文件名含 hash，可安全长缓存） ----
-    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff2?|ttf|eot)$ {
-        expires 1y;
-        add_header Cache-Control "public, immutable";
-        access_log off;
-    }
-
-    # ---- index.html 不缓存，保证发版即时生效 ----
-    location = /index.html {
-        add_header Cache-Control "no-cache, no-store, must-revalidate";
-        expires -1;
-    }
-
-    # ---- 接口反向代理（接入真实后端时启用） ----
-    location /api/ {
-        proxy_pass         <后端服务地址>;
-        proxy_set_header   Host              $host;
-        proxy_set_header   X-Real-IP         $remote_addr;
-        proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
-        proxy_set_header   X-Forwarded-Proto $scheme;
-        proxy_connect_timeout 30s;
-        proxy_read_timeout    60s;
-    }
-
-    # ---- Gzip 压缩 ----
-    gzip on;
-    gzip_min_length 1k;
-    gzip_comp_level 6;
-    gzip_types text/plain text/css application/javascript application/json image/svg+xml;
-    gzip_vary on;
-}
-```
-
 ### Vite 开发代理配置
 
 本地开发需要绕过浏览器跨域限制时，在 `vite.config.ts` 中配置代理：
@@ -967,113 +916,6 @@ export default defineConfig({
 ```
 
 > 📌 **代理与 Mock 的关系**：项目当前通过 Axios **自定义 adapter**（`src/utils/request.ts`）优先命中本地 Mock，Mock 未命中时才发起真实请求。因此即便配置了 Vite 代理，Mock 接口也不会被转发。接入真实后端时，将 `VITE_USE_MOCK` 置为 `false`（或直接移除 adapter 中的 Mock 分支）即可让全部接口走代理转发。
-
-### Docker 部署
-
-**`Dockerfile`（多阶段构建）**：
-
-```dockerfile
-# ---------- 构建阶段 ----------
-FROM node:20-alpine AS builder
-
-WORKDIR /app
-
-# 先复制依赖清单，利用 Docker 层缓存
-COPY package*.json ./
-RUN npm ci
-
-# 复制源码并构建
-COPY . .
-RUN npm run build
-
-# ---------- 运行阶段 ----------
-FROM nginx:1.27-alpine
-
-# 复制构建产物
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-# 复制 Nginx 配置（含 try_files 回退）
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
-```
-
-**构建与运行**：
-
-```bash
-# 构建镜像
-docker build -t greengrid-admin:1.0.0 .
-
-# 运行容器
-docker run -d --name greengrid-admin -p 8080:80 greengrid-admin:1.0.0
-
-# 访问 http://localhost:8080
-```
-
-**`docker-compose.yml`**：
-
-```yaml
-version: '3.8'
-
-services:
-  web:
-    build: .
-    container_name: greengrid-admin
-    ports:
-      - '8080:80'
-    restart: unless-stopped
-```
-
-```bash
-docker compose up -d --build
-```
-
-### CI/CD 示例（GitHub Actions）
-
-`.github/workflows/deploy.yml`：
-
-```yaml
-name: Build & Deploy
-
-on:
-  push:
-    branches: [main]
-
-jobs:
-  build-deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: 拉取代码
-        uses: actions/checkout@v4
-
-      - name: 安装 Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: 安装依赖
-        run: npm ci
-
-      - name: 类型检查
-        run: npm run type-check
-
-      - name: 构建
-        run: npm run build
-
-      - name: 部署到服务器
-        uses: easingthemes/ssh-deploy@main
-        with:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          SOURCE: dist/
-          TARGET: /usr/share/nginx/html/greengrid-admin/
-```
-
-> 🔐 敏感凭据（`SSH_PRIVATE_KEY` / `REMOTE_HOST` / `REMOTE_USER` 等）必须存放于仓库 **Secrets**，严禁硬编码进代码或 README。
 
 ---
 
@@ -1129,27 +971,6 @@ jobs:
 - ✅ 异步操作统一使用 `async / await` + `try / catch`（表单校验失败需捕获而非中断）
 
 ### 提交规范（Conventional Commits）
-
-```
-<type>(<scope>): <subject>
-
-[body]
-
-[footer]
-```
-
-| type | 说明 |
-| :--- | :--- |
-| `feat` | 新增功能 |
-| `fix` | 修复缺陷 |
-| `docs` | 文档变更 |
-| `style` | 代码格式（不影响逻辑） |
-| `refactor` | 重构（非新增功能、非修复缺陷） |
-| `perf` | 性能优化 |
-| `test` | 测试相关 |
-| `build` | 构建系统或依赖变更 |
-| `ci` | CI 配置变更 |
-| `chore` | 其他杂项 |
 
 **提交示例**：
 
@@ -1226,18 +1047,6 @@ Vite 仅在**启动/构建时**读取环境变量，修改后需**重启开发�
 
 ## 贡献指南
 
-我们欢迎任何形式的贡献！请遵循以下流程：
-
-### 分支规范
-
-| 分支 | 说明 |
-| :--- | :--- |
-| `main` | 主分支，始终保持可发布状态 |
-| `develop` | 开发分支，功能合并目标 |
-| `feature/<功能名>` | 功能分支，如 `feature/project-export` |
-| `fix/<问题描述>` | 修复分支，如 `fix/board-kpi-align` |
-| `hotfix/<问题描述>` | 紧急修复分支 |
-
 ### 开发流程
 
 ```bash
@@ -1262,16 +1071,6 @@ git commit -m "feat(模块): 功能描述"
 # 6. 推送并创建 Pull Request
 git push origin feature/<功能名>
 ```
-
-### Pull Request 要求
-
-- [ ] 描述清晰：说明变更内容、原因与影响范围
-- [ ] `npm run build` 构建通过，无 TypeScript 报错
-- [ ] 代码符合「动词 + 名词」命名规范与文件头注释规范
-- [ ] 新页面已在路由表与侧边栏菜单中正确注册权限
-- [ ] 新增接口已在 `api/` 层与 `mock/` 路由表中同步补充
-- [ ] 无 `console.log` 等调试代码残留
-- [ ] 涉及 UI 变更时附带截图
 
 ---
 
@@ -1304,32 +1103,6 @@ git push origin feature/<功能名>
 
 本项目基于 [MIT License](https://opensource.org/licenses/MIT) 开源。
 
-```
-MIT License
-
-Copyright (c) 2026 <版权所有者>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
-> 如需商用，请先确认协议条款；如项目为内部系统，可将本节替换为「内部专有，未经授权禁止外传」。
-
 ---
 
 ## 联系方式
@@ -1338,7 +1111,7 @@ SOFTWARE.
 | :--- | :--- |
 | 项目负责人 | `<姓名>` |
 | 邮箱 | `<邮箱地址>` |
-| 仓库地址 | <https://gitee.com/rainbow-under-the-sunshine/react_corp>（示例，请替换） |
+| 仓库地址 | <https://gitee.com/rainbow-under-the-sunshine/New-Energy-Platform#致谢>（示例，请替换） |
 | 问题反馈 | [提交 Issue](<仓库地址>/issues) |
 | 技术讨论 | [发起 Discussion](<仓库地址>/discussions) |
 
