@@ -1,7 +1,3 @@
-<!--
-  [入口页面] index.html —— 全局
-  说明：应用 HTML 模板，提供根组件挂载点
--->
 <!doctype html>
 <html lang="zh-CN">
 
@@ -11,9 +7,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="GreenGrid 新能源企业运营数据可视化平台" />
   <title>GreenGrid 新能源运营平台</title>
-  <script type="module" crossorigin src="/New-Energy-Platform/assets/index-DCSQYkE8.js"></script>
-  <link rel="modulepreload" crossorigin href="/New-Energy-Platform/assets/vendor-k2dTojeh.js">
-  <link rel="modulepreload" crossorigin href="/New-Energy-Platform/assets/antd-DNeVyVev.js">
+
+  <!-- GitHub Pages 兜底：还原因 404.html 透传过来的原始路由 -->
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search)
+      var route = params.get('p')
+      if (!route) return
+      params.delete('p')
+      var rest = params.toString()
+      /* 用 history.replaceState 还原 SPA 路由，避免刷新丢失 */
+      window.history.replaceState(null, '', route + (rest ? '?' + rest : ''))
+    })()
+  </script>
+  <script type="module" crossorigin src="/New-Energy-Platform/assets/index-DOZnVpzh.js"></script>
+  <link rel="modulepreload" crossorigin href="/New-Energy-Platform/assets/vendor-ajujTrsC.js">
+  <link rel="modulepreload" crossorigin href="/New-Energy-Platform/assets/antd-CMsu-4zG.js">
   <link rel="stylesheet" crossorigin href="/New-Energy-Platform/assets/index-DBCdS5SP.css">
 </head>
 
