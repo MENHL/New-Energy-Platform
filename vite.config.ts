@@ -10,6 +10,8 @@ import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers'
 import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig({
+  // githup pages 配置
+  base: '/New-Energy-Platform/',
   /* 插件：Vue 单文件组件 + Ant Design Vue 按需引入（v4 为 cssinjs 主题，无需额外样式导入） */
   plugins: [
     vue(),
