@@ -2,7 +2,7 @@
  * [路由配置] router/index.ts —— 全局
  * 说明：路由表（页面懒加载）、登录守卫、角色权限控制与页面标题设置
  */
-import { createRouter, createWebHashHistory, createWebHistory, type RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { message } from 'ant-design-vue'
 import { useUserStore } from '@/stores/userStore'
 
@@ -117,7 +117,8 @@ const routes: RouteRecordRaw[] = [
 ]
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  /* 基础路径跟随 Vite base：GitHub Pages 子路径部署时保持路由与资源路径一致 */
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes
 })
 

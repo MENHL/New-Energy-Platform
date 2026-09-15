@@ -1,6 +1,7 @@
 /**
  * [工程配置] vite.config.ts —— 全局构建配置
- * 说明：Vue 插件、@ 别名、Ant Design Vue 按需自动引入、SCSS 全局变量注入、分包优化
+ * 说明：Vue 插件、@ 别名、Ant Design Vue 按需自动引入、SCSS 全局变量注入、
+ *      部署基础路径（GitHub Pages 子路径）、分包优化
  */
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -9,7 +10,12 @@ import Components from 'unplugin-vue-components/vite'
 import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers'
 import { fileURLToPath, URL } from 'node:url'
 
-export default defineConfig({
+/* 部署基础路径：GitHub Pages 项目站点为 /<仓库名>/，本地开发为 / */
+const GITHUB_PAGES_BASE = '/New-Energy-Platform/'
+
+export default defineConfig(({ command }) => ({
+  /* 基础路径：构建时使用 Pages 子路径，开发服务器保持根路径 */
+  base: command === 'build' ? GITHUB_PAGES_BASE : '/',
 
   /* 插件：Vue 单文件组件 + Ant Design Vue 按需引入（v4 为 cssinjs 主题，无需额外样式导入） */
   plugins: [
@@ -24,8 +30,6 @@ export default defineConfig({
       dts: false
     })
   ],
-  // githup pages 配置
-  base: '/New-Energy-Platform/',
 
   /* 路径别名：@ 指向 src 目录 */
   resolve: {
@@ -63,4 +67,4 @@ export default defineConfig({
     port: 5180,
     open: false
   }
-})
+}))
